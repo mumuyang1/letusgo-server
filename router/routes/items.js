@@ -37,7 +37,6 @@ router.post('/', function(req, res){
 
   router.delete('/:id', function(req, res) {
 
-
       var id = req.params.id;
       client.get('allProducts',function(err,data){
 
@@ -56,29 +55,54 @@ router.post('/', function(req, res){
      });
   });
 
-  router.post('/name', function(req, res) {
+  router.post('/:name', function(req, res) {
 
-          var name = req.params.name;
+      client.get('allProducts',function(err,data){
 
-          client.get('categories',function(err,data){
+          var allProducts = JSON.parse( data);
 
-          var categories = JSON.parse(data);
-          var newCategory =
+          var newProduct =
                   {
-                      barcode : barcode,
-                      name : name,
-                      categoryId : categoryId,
-                      price : price,
-                      unit : unit        
+                      name : req.params.name,
+                      categoryId : req.body.categoryId,
+                      price : req.body.price,
+                      unit : req.body.unit
                   };
-          newCategory.id = categories[categories.length-1].id + 1;
+          var lastBarcode = allProducts[allProducts.length - 1].barcode;
 
-          categories.push(newCategory);
+          var i = +lastBarcode.substring(9,lastBarcode.length) + 1;
+           newProduct.barcode = allProducts[allProducts.length - 1].barcode.substring(0,9) + i;
 
-          client.set('categories',JSON.stringify(categories),function(err, data){
-          res.send(data);
+          allProducts.push(newProduct);
+
+          client.set('allProducts',JSON.stringify(allProducts),function(err, data){
+              res.send(data);
           });
-      });
     });
+  });
+
+  router.put('/:id', function(req, res) {
+
+    var id = parseInt(req.params.id);
+
+    client.get('allProducts',function(err,data){
+
+        var allProducts = JSON.parse(data);
+
+        _.forEach(allProducts,function(product){
+
+            if(product.barcode === id){
+                product.name =  req.body.name;
+                product.unit =  req.body.unit;
+                product.price =  req.body.price;
+                product.categoryId =  req.body.categoryId;
+
+                client.set('allProducts',JSON.stringify(allProducts),function(err, allProducts){
+                  res.send(allProducts);
+                });
+            }
+        });
+    });
+});
 
 module.exports = router;
