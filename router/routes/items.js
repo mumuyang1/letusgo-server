@@ -83,7 +83,7 @@ router.post('/', function(req, res){
 
   router.put('/:id', function(req, res) {
 
-    var id = parseInt(req.params.id);
+    var id = req.params.id;
 
     client.get('allProducts',function(err,data){
 
