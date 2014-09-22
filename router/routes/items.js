@@ -4,6 +4,8 @@ var router = express.Router();
 var redis = require('redis');
 var client = redis.createClient();
 
+var _ = require('lodash');
+
 router.get('/', function(req, res) {
 
   client.get('allProducts',function(err,data){
@@ -32,5 +34,51 @@ router.post('/', function(req, res){
       res.send(data);
     });
   });
+
+  router.delete('/:id', function(req, res) {
+
+
+      var id = req.params.id;
+      client.get('allProducts',function(err,data){
+
+        var allProducts = JSON.parse(data);
+        _.forEach(allProducts,function(product){
+          if(product.barcode === id){
+
+              allProducts = _.without(allProducts,product);
+
+              client.set('allProducts',JSON.stringify(allProducts),function(err, allProducts){
+                res.send(allProducts);
+              });
+           }
+
+        });
+     });
+  });
+
+  router.post('/name', function(req, res) {
+
+          var name = req.params.name;
+
+          client.get('categories',function(err,data){
+
+          var categories = JSON.parse(data);
+          var newCategory =
+                  {
+                      barcode : barcode,
+                      name : name,
+                      categoryId : categoryId,
+                      price : price,
+                      unit : unit        
+                  };
+          newCategory.id = categories[categories.length-1].id + 1;
+
+          categories.push(newCategory);
+
+          client.set('categories',JSON.stringify(categories),function(err, data){
+          res.send(data);
+          });
+      });
+    });
 
 module.exports = router;
