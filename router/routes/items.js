@@ -9,6 +9,7 @@ var _ = require('lodash');
 router.get('/', function(req, res) {
 
   client.get('allProducts',function(err,data){
+
     res.send(data);
   });
 });
@@ -71,7 +72,8 @@ router.post('/', function(req, res){
           var lastBarcode = allProducts[allProducts.length - 1].barcode;
 
           var i = +lastBarcode.substring(9,lastBarcode.length) + 1;
-           newProduct.barcode = allProducts[allProducts.length - 1].barcode.substring(0,9) + i;
+          newProduct.barcode = allProducts[allProducts.length - 1].barcode.substring(0,9) + i;
+          newProduct.id = i;
 
           allProducts.push(newProduct);
 
@@ -83,7 +85,7 @@ router.post('/', function(req, res){
 
   router.put('/:id', function(req, res) {
 
-    var id = req.params.id;
+    var id = parseInt(req.params.id);
 
     client.get('allProducts',function(err,data){
 
@@ -91,7 +93,7 @@ router.post('/', function(req, res){
 
         _.forEach(allProducts,function(product){
 
-            if(product.barcode === id){
+            if(product.id === id){
                 product.name =  req.body.name;
                 product.unit =  req.body.unit;
                 product.price =  req.body.price;
