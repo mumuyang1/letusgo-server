@@ -56,7 +56,7 @@ router.post('/', function(req, res){
      });
   });
 
-  router.post('/:name', function(req, res) {
+  router.post('/:id', function(req, res) {
 
       client.get('allProducts',function(err,data){
 
@@ -64,7 +64,8 @@ router.post('/', function(req, res){
 
           var newProduct =
                   {
-                      name : req.params.name,
+                      id : parseInt(req.params.id),
+                      name : req.body.name,
                       categoryId : req.body.categoryId,
                       price : req.body.price,
                       unit : req.body.unit
@@ -73,7 +74,6 @@ router.post('/', function(req, res){
 
           var i = +lastBarcode.substring(9,lastBarcode.length) + 1;
           newProduct.barcode = allProducts[allProducts.length - 1].barcode.substring(0,9) + i;
-          newProduct.id = i;
 
           allProducts.push(newProduct);
 
