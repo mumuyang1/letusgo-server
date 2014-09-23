@@ -30,23 +30,22 @@ var _ = require('lodash');
 
     });
 
-  router.post('/:name', function(req, res) {
+  router.post('/:id', function(req, res) {
 
-          var name = req.params.name;
+      client.get('categories',function(err,data){
 
-          client.get('categories',function(err,data){
-
-          var categories = JSON.parse(data);
-          var newCategory = { name : name };
-          newCategory.id = categories[categories.length-1].id + 1;
-
-          categories.push(newCategory);
-
-          client.set('categories',JSON.stringify(categories),function(err, data){
+        var categories = JSON.parse(data);
+        var newCategory =
+                    {
+                       id : parseInt(req.params.id),
+                       name : req.body.name
+                    };
+        categories.push(newCategory);
+        client.set('categories',JSON.stringify(categories),function(err, data){
           res.send(data);
-          });
-      });
-    });
+        });
+   });
+ });
 
   router.delete('/:id', function(req, res) {
 
@@ -72,7 +71,9 @@ var _ = require('lodash');
 
   router.put('/:id', function(req, res) {
 
+
     var id = parseInt(req.params.id);
+
     var categoryName = req.body.categoryName;
 
     client.get('categories',function(err,data){
