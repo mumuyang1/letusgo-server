@@ -9,6 +9,7 @@ var _ = require('lodash');
   router.get('/', function(req, res) {
 
     client.get('categories',function(err, data){
+
       res.send(data);
     });
   });
