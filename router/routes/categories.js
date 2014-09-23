@@ -21,7 +21,7 @@ var _ = require('lodash');
                 {id: 3, name: '生活用品'},
                 {id: 4, name: '饰品'}
               ];
-       var categories = req.param('categories') || categoryArray;
+        var categories = req.param('categories') || categoryArray;
 
        client.set('categories',JSON.stringify(categories),function(err, data){
         res.send(data);

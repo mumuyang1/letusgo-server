@@ -17,18 +17,18 @@ router.get('/', function(req, res) {
 router.post('/', function(req, res){
 
     var allProductsArray = [
-                    {barcode:'ITEM000001',categoryId:1,name:'苹果',price:'3.00',unit:'斤'},
-                    {barcode:'ITEM000002',categoryId:1,name:'香蕉',price:'3.50',unit:'斤'},
-                    {barcode:'ITEM000003',categoryId:1,name:'菠萝',price:'4.00',unit:'个'},
-                    {barcode:'ITEM000004',categoryId:2,name:'雪碧',price:'3.00',unit:'瓶'},
-                    {barcode:'ITEM000005',categoryId:2,name:'可口可乐',price:'3.00',unit:'瓶'},
-                    {barcode:'ITEM000006',categoryId:3,name:'公牛插座',price:'10.00',unit:'个'},
-                    {barcode:'ITEM000007',categoryId:3,name:'水杯',price:'16.00',unit:'个'},
-                    {barcode:'ITEM000008',categoryId:4,name:'钻石项链',price:'160000.00',unit:'个'},
-                    {barcode:'ITEM000009',categoryId:4,name:'翡翠手镯',price:'200.00',unit:'个'}
+                    {id:1,barcode:'ITEM000001',categoryId:1,name:'苹果',price:'3.00',unit:'斤'},
+                    {id:2,barcode:'ITEM000002',categoryId:1,name:'香蕉',price:'3.50',unit:'斤'},
+                    {id:3,barcode:'ITEM000003',categoryId:1,name:'菠萝',price:'4.00',unit:'个'},
+                    {id:4,barcode:'ITEM000004',categoryId:2,name:'雪碧',price:'3.00',unit:'瓶'},
+                    {id:5,barcode:'ITEM000005',categoryId:2,name:'可口可乐',price:'3.00',unit:'瓶'},
+                    {id:6,barcode:'ITEM000006',categoryId:3,name:'公牛插座',price:'10.00',unit:'个'},
+                    {id:7,barcode:'ITEM000007',categoryId:3,name:'水杯',price:'16.00',unit:'个'},
+                    {id:8,barcode:'ITEM000008',categoryId:4,name:'钻石项链',price:'160000.00',unit:'个'},
+                    {id:9,barcode:'ITEM000009',categoryId:4,name:'翡翠手镯',price:'200.00',unit:'个'}
                   ];
 
-     var allProducts = req.param('allProducts')|| allProductsArray;
+      var allProducts = req.param('allProducts')|| allProductsArray;
 
      client.set('allProducts',JSON.stringify(allProducts),function(err, data){
       res.send(data);
