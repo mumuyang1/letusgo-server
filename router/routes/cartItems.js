@@ -48,35 +48,6 @@ router.post('/', function(req, res){
     });
 });
 
-// function add(cartItems,id){
-//
-//   _.forEach(cartItems,function(cartItem){
-//     if (cartItem.item.id  === id){
-//         cartItem.count += 1;
-//       }
-//   });
-//
-// }
-//
-// router.put('/:id', function(req, res){
-//
-//     client.get('cartItems',function(err,data){
-//
-//         var cartItems = JSON.parse(data);
-//
-//         var operation = req.body.operation;
-//
-//         if(operation === 'add'){
-//           add(cartItems,parseInt(req.params.id));
-//         }
-//
-//         client.set('cartItems',JSON.stringify(cartItems),function(err, data){
-//           res.send(data);
-//         });
-//     });
-// });
-
-
 
 router.put('/:id', function(req, res){
 
@@ -108,26 +79,10 @@ router.put('/:id', function(req, res){
 });
 
 
+router.delete('/', function(){
 
-//
-// router.post('/:id', function(req, res){
-//
-//
-//     client.get('cartItems',function(err,data){
-//
-//         var cartItems = JSON.parse(data);
-//           console.log(cartItems[0].count+'============');
-//
-//         client.set('cartItems',JSON.stringify(cartItems),function(err, data){
-//           res.send(data);
-//         });
-//     });
-// });
-
-
-
-
-
+     client.DEL('cartItems');
+});
 
 
 module.exports = router;
