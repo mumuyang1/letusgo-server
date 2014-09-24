@@ -86,24 +86,17 @@ router.put('/:id', function(req, res){
 
         var operation = req.body.operation;
 
-
         _.forEach(cartItems,function(cartItem){
             if (cartItem.item.id  === parseInt(req.params.id)){
 
                 if(operation === 'add'){
-                  // add(cartItems,parseInt(req.params.id));
                   cartItem.count += 1;
                 }
-                console.log(operation+'============');
                 if(operation === 'reduce'){
-                  // add(cartItems,parseInt(req.params.id));
                   cartItem.count -= 1;
-                  console.log(cartItem.item.id+'============');
                 }
                 if(operation === 'delete'){
-                  // add(cartItems,parseInt(req.params.id));
                   cartItems = _.without(cartItems,cartItem);
-                  // console.log(cartItem.item.id+'============');
                 }
               }
           });
