@@ -23,25 +23,24 @@ router.post('/', function(req, res){
 });
 
 
-// router.post('/:id', function(req, res){
-//
-//   client.get('allProducts',function(err,data){
-//
-//
-//     var products = JSON.parse(data);
-//
-//     var result = _.find(products,{'id': parseInt(req.params.id)});
-//
-//     var cartItems = [];
-//     var cartItem = {'item':result,'count' : 1 };
-//
-//     cartItems.push(cartItem);
-//
-//     client.set('cartItems',JSON.stringify(cartItems),function(err, data){
-//      res.send(data);
-//    });
-//   });
-// });
+router.post('/:id', function(req, res){
+
+    client.get('cartItems',function(err,data){
+
+        var cartItems = JSON.parse(data);
+
+        _.forEach(cartItems,function(cartItem){
+          if (cartItem.item.id  === parseInt(req.params.id)){
+
+              cartItem.count += 1;
+
+              client.set('cartItems',JSON.stringify(cartItems),function(err, data){
+                res.send(data);
+              });
+            }
+        });
+    });
+});
 
 
 module.exports = router;
