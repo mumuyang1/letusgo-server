@@ -64,7 +64,11 @@ router.put('/:id', function(req, res){
                   cartItem.count += 1;
                 }
                 if(operation === 'reduce'){
-                  cartItem.count -= 1;
+
+                  if(cartItem.count > 1){
+
+                    cartItem.count -= 1;
+                  }
                 }
                 if(operation === 'delete'){
                   cartItems = _.without(cartItems,cartItem);
