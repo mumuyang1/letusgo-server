@@ -13,15 +13,15 @@ router.get('/', function(req, res){
 });
 
 
-     function judgeIsExist(cartItems,item){
+ function judgeIsExist(cartItems,item){
 
-       for(var i = 0; i < cartItems.length; i++){
+   for(var i = 0; i < cartItems.length; i++){
 
-         if(item.id === cartItems[i].item.id){
-           return cartItems[i];
-         }
-        }
+     if(item.id === cartItems[i].item.id){
+       return cartItems[i];
      }
+    }
+ }
 
 router.post('/', function(req, res){
 
@@ -31,9 +31,9 @@ router.post('/', function(req, res){
 
        client.get('cartItems',function(err,data){
 
-           var cartItems = JSON.parse(data);
-             if(!cartItems){
-                cartItems= [];
+         var cartItems = JSON.parse(data);
+           if(!cartItems){
+               cartItems= [];
                cartItems.push(cartItem);
 
            } else {
@@ -42,9 +42,9 @@ router.post('/', function(req, res){
                result ? result.count++ : cartItems.push(cartItem);
            }
 
-        client.set('cartItems',JSON.stringify(cartItems),function(err, data){
-         res.send(data);
-        });
+          client.set('cartItems',JSON.stringify(cartItems),function(err, data){
+           res.send(data);
+          });
     });
 });
 
