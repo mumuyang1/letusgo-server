@@ -31,7 +31,7 @@ router.post('/', function(req, res){
 
        client.get('cartItems',function(err,data){
 
-          var cartItems = JSON.parse(data);
+           var cartItems = JSON.parse(data);
              if(!cartItems){
                 cartItems= [];
                cartItems.push(cartItem);
