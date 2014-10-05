@@ -56,32 +56,32 @@ router.post('/', function(req, res){
      });
   });
 
-  router.post('/:id', function(req, res) {
 
-      client.get('allProducts',function(err,data){
+  function add(allProducts,newProduct){
+    var lastBarcode = allProducts[allProducts.length - 1].barcode;
+    var i = +lastBarcode.substring(9,lastBarcode.length) + 1;
 
-          var allProducts = JSON.parse( data);
+    newProduct.barcode = allProducts[allProducts.length - 1].barcode.substring(0,9) + i;
+    allProducts.push(newProduct);
+    return allProducts;
+  }
 
-          var newProduct =
-                  {
-                      id : parseInt(req.params.id),
-                      name : req.body.name,
-                      categoryId : req.body.categoryId,
-                      price : req.body.price,
-                      unit : req.body.unit
-                  };
-          var lastBarcode = allProducts[allProducts.length - 1].barcode;
 
-          var i = +lastBarcode.substring(9,lastBarcode.length) + 1;
-          newProduct.barcode = allProducts[allProducts.length - 1].barcode.substring(0,9) + i;
+router.post('/:id', function(req, res) {
 
-          allProducts.push(newProduct);
+    client.get('allProducts',function(err,data){
 
-          client.set('allProducts',JSON.stringify(allProducts),function(err, data){
-              res.send(data);
-          });
-    });
+        var newProduct = req.body.item;
+        newProduct.id = parseInt(req.params.id);
+
+        var allProducts = add(JSON.parse( data),newProduct);
+
+        client.set('allProducts',JSON.stringify(allProducts),function(err, data){
+            res.send(data);
+        });
   });
+});
+
 
   router.put('/:id', function(req, res) {
 
