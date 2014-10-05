@@ -23,30 +23,64 @@ router.get('/', function(req, res){
     }
  }
 
+
+function add(cartItems,item){
+
+  var cartItem = {'item' : item, 'count' : 1};
+
+  if(!cartItems){
+      cartItems= [];
+      cartItems.push(cartItem);
+
+  } else {
+
+      var result = judgeIsExist(cartItems,item);
+      result ? result.count++ : cartItems.push(cartItem);
+  }
+  return cartItems;
+}
+
+
 router.post('/', function(req, res){
 
   var item = req.body.item;
 
-   var cartItem = {'item' : item, 'count' : 1};
+     client.get('cartItems',function(err,data){
 
-       client.get('cartItems',function(err,data){
+        var cartItems = add(JSON.parse(data),item);
 
-         var cartItems = JSON.parse(data);
-           if(!cartItems){
-               cartItems= [];
-               cartItems.push(cartItem);
-
-           } else {
-
-               var result = judgeIsExist(cartItems,item);
-               result ? result.count++ : cartItems.push(cartItem);
-           }
-
-          client.set('cartItems',JSON.stringify(cartItems),function(err, data){
-           res.send(data);
-          });
+        client.set('cartItems',JSON.stringify(cartItems),function(err, data){
+          res.send(data);
+        });
     });
 });
+
+
+
+// router.post('/', function(req, res){
+//
+//   var item = req.body.item;
+//
+//    var cartItem = {'item' : item, 'count' : 1};
+//
+//        client.get('cartItems',function(err,data){
+//
+//          var cartItems = JSON.parse(data);
+//            if(!cartItems){
+//                cartItems= [];
+//                cartItems.push(cartItem);
+//
+//            } else {
+//
+//                var result = judgeIsExist(cartItems,item);
+//                result ? result.count++ : cartItems.push(cartItem);
+//            }
+//
+//           client.set('cartItems',JSON.stringify(cartItems),function(err, data){
+//            res.send(data);
+//           });
+//     });
+// });
 
 
 router.put('/:id', function(req, res){
