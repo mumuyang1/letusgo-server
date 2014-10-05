@@ -6,13 +6,6 @@ var client = redis.createClient();
 
 var _ = require('lodash');
 
-router.get('/', function(req, res){
-  client.get('cartItems',function(err,data){
-    res.send(data);
-  });
-});
-
-
  function judgeIsExist(cartItems,item){
 
    for(var i = 0; i < cartItems.length; i++){
@@ -23,104 +16,83 @@ router.get('/', function(req, res){
     }
  }
 
+  function add(cartItems,item){
 
-function add(cartItems,item){
+    var cartItem = {'item' : item, 'count' : 1};
 
-  var cartItem = {'item' : item, 'count' : 1};
+    if(!cartItems){
+        cartItems= [];
+        cartItems.push(cartItem);
 
-  if(!cartItems){
-      cartItems= [];
-      cartItems.push(cartItem);
+    } else {
 
-  } else {
-
-      var result = judgeIsExist(cartItems,item);
-      result ? result.count++ : cartItems.push(cartItem);
+        var result = judgeIsExist(cartItems,item);
+        result ? result.count++ : cartItems.push(cartItem);
+    }
+    return cartItems;
   }
-  return cartItems;
-}
 
+  function modify(cartItems,id,operation) {
+  _.forEach(cartItems,function(cartItem){
+      if (cartItem.item.id  === id ){
 
-router.post('/', function(req, res){
+          if(operation === 'add'){
+            cartItem.count += 1;
+          }
+          if(operation === 'reduce'){
 
-  var item = req.body.item;
+            if(cartItem.count > 1){
 
-     client.get('cartItems',function(err,data){
-
-        var cartItems = add(JSON.parse(data),item);
-
-        client.set('cartItems',JSON.stringify(cartItems),function(err, data){
-          res.send(data);
-        });
+              cartItem.count -= 1;
+            }
+          }
+          if(operation === 'delete'){
+            cartItems = _.without(cartItems,cartItem);
+          }
+        }
     });
-});
+    return cartItems;
+  }
 
-
-
-// router.post('/', function(req, res){
-//
-//   var item = req.body.item;
-//
-//    var cartItem = {'item' : item, 'count' : 1};
-//
-//        client.get('cartItems',function(err,data){
-//
-//          var cartItems = JSON.parse(data);
-//            if(!cartItems){
-//                cartItems= [];
-//                cartItems.push(cartItem);
-//
-//            } else {
-//
-//                var result = judgeIsExist(cartItems,item);
-//                result ? result.count++ : cartItems.push(cartItem);
-//            }
-//
-//           client.set('cartItems',JSON.stringify(cartItems),function(err, data){
-//            res.send(data);
-//           });
-//     });
-// });
-
-
-router.put('/:id', function(req, res){
-
+  router.get('/', function(req, res){
     client.get('cartItems',function(err,data){
-
-        var cartItems = JSON.parse(data);
-
-        var operation = req.body.operation;
-
-        _.forEach(cartItems,function(cartItem){
-            if (cartItem.item.id  === parseInt(req.params.id)){
-
-                if(operation === 'add'){
-                  cartItem.count += 1;
-                }
-                if(operation === 'reduce'){
-
-                  if(cartItem.count > 1){
-
-                    cartItem.count -= 1;
-                  }
-                }
-                if(operation === 'delete'){
-                  cartItems = _.without(cartItems,cartItem);
-                }
-              }
-          });
-
-        client.set('cartItems',JSON.stringify(cartItems),function(err, data){
-          res.send(data);
-        });
+      res.send(data);
     });
-});
+  });
+
+  router.post('/', function(req, res){
+
+    var item = req.body.item;
+
+       client.get('cartItems',function(err,data){
+
+          var cartItems = add(JSON.parse(data),item);
+
+          client.set('cartItems',JSON.stringify(cartItems),function(err, data){
+            res.send(data);
+          });
+      });
+  });
 
 
-router.delete('/', function(){
+  router.put('/:id', function(req, res){
 
-     client.DEL('cartItems');
-});
+      client.get('cartItems',function(err,data){
+
+          var id = parseInt(req.params.id);
+          var operation = req.body.operation;
+          var cartItems = modify(JSON.parse(data),id,operation);
+
+          client.set('cartItems',JSON.stringify(cartItems),function(err, data){
+            res.send(data);
+          });
+      });
+  });
+
+  router.delete('/', function(){
+
+       client.DEL('cartItems');
+  });
 
 
 module.exports = router;
