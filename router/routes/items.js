@@ -67,44 +67,48 @@ router.post('/', function(req, res){
   }
 
 
-router.post('/:id', function(req, res) {
+  router.post('/:id', function(req, res) {
 
-    client.get('allProducts',function(err,data){
+      client.get('allProducts',function(err,data){
 
-        var newProduct = req.body.item;
-        newProduct.id = parseInt(req.params.id);
+          var newProduct = req.body.item;
+          newProduct.id = parseInt(req.params.id);
 
-        var allProducts = add(JSON.parse( data),newProduct);
+          var allProducts = add(JSON.parse( data),newProduct);
 
-        client.set('allProducts',JSON.stringify(allProducts),function(err, data){
-            res.send(data);
-        });
+          client.set('allProducts',JSON.stringify(allProducts),function(err, data){
+              res.send(data);
+          });
+    });
   });
-});
 
+  function modify(allProducts,id,item){
+    _.forEach(allProducts,function(product){
+
+        if(product.id === id){
+            product.name =  item.name;
+            product.unit =  item.unit;
+            product.price =  item.price;
+            product.categoryId =  item.categoryId;
+        }
+    });
+    return allProducts;
+  }
 
   router.put('/:id', function(req, res) {
 
     var id = parseInt(req.params.id);
+    var item = req.body.item;
 
     client.get('allProducts',function(err,data){
 
-        var allProducts = JSON.parse(data);
+        var allProducts = modify(JSON.parse(data),id,item);
 
-        _.forEach(allProducts,function(product){
-
-            if(product.id === id){
-                product.name =  req.body.name;
-                product.unit =  req.body.unit;
-                product.price =  req.body.price;
-                product.categoryId =  req.body.categoryId;
-
-                client.set('allProducts',JSON.stringify(allProducts),function(err, allProducts){
-                  res.send(allProducts);
-                });
-            }
+        client.set('allProducts',JSON.stringify(allProducts),function(err, allProducts){
+          res.send(allProducts);
         });
+
     });
-});
+  });
 
 module.exports = router;
