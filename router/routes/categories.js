@@ -6,89 +6,84 @@ var client = redis.createClient();
 
 var _ = require('lodash');
 
-  router.get('/', function(req, res) {
+router.get('/', function (req, res) {
 
-    client.get('categories',function(err, data){
+  client.get('categories', function (err, data) {
 
+    res.send(data);
+  });
+});
+
+function initCategories() {
+  return  [
+    {id: 1, name: '水果'},
+    {id: 2, name: '饮料'},
+    {id: 3, name: '生活用品'},
+    {id: 4, name: '饰品'}
+  ];
+}
+
+client.set('categories', JSON.stringify(initCategories()));
+
+router.post('/:id', function (req, res) {
+
+  client.get('categories', function (err, data) {
+
+    var categories = JSON.parse(data);
+    var newCategory =
+    {
+      id: parseInt(req.params.id),
+      name: req.body.name
+    };
+    categories.push(newCategory);
+    client.set('categories', JSON.stringify(categories), function (err, data) {
       res.send(data);
     });
   });
+});
 
-  router.post('/', function(req, res) {
+router.delete('/:id', function (req, res) {
 
-        var categoryArray = [
-                {id: 1, name: '水果'},
-                {id: 2, name: '饮料'},
-                {id: 3, name: '生活用品'},
-                {id: 4, name: '饰品'}
-              ];
-        var categories = req.param('categories') || categoryArray;
+  var id = parseInt(req.params.id);
 
-       client.set('categories',JSON.stringify(categories),function(err, data){
-        res.send(data);
-      });
+  client.get('categories', function (err, data) {
+
+    var categories = JSON.parse(data);
+    _.forEach(categories, function (categoryEach) {
+      if (categoryEach.id === id) {
+
+        categories = _.without(categories, categoryEach);
+
+        client.set('categories', JSON.stringify(categories), function (err, categories) {
+          res.send(categories);
+        });
+      }
 
     });
-
-  router.post('/:id', function(req, res) {
-
-      client.get('categories',function(err,data){
-
-        var categories = JSON.parse(data);
-        var newCategory =
-                    {
-                       id : parseInt(req.params.id),
-                       name : req.body.name
-                    };
-        categories.push(newCategory);
-        client.set('categories',JSON.stringify(categories),function(err, data){
-          res.send(data);
-        });
-   });
- });
-
-  router.delete('/:id', function(req, res) {
-
-      var id = parseInt(req.params.id);
-
-      client.get('categories',function(err,data){
-
-        var categories = JSON.parse(data);
-        _.forEach(categories,function(categoryEach){
-          if(categoryEach.id === id){
-
-              categories = _.without(categories,categoryEach);
-
-              client.set('categories',JSON.stringify(categories),function(err, categories){
-                res.send(categories);
-              });
-           }
-
-        });
-     });
   });
+});
 
 
-  router.put('/:id', function(req, res) {
+router.put('/:id', function (req, res) {
 
 
-    var id = parseInt(req.params.id);
+  var id = parseInt(req.params.id);
 
-    var categoryName = req.body.categoryName;
+  var categoryName = req.body.categoryName;
 
-    client.get('categories',function(err,data){
+  client.get('categories', function (err, data) {
 
-      var categories = JSON.parse(data);
+    var categories = JSON.parse(data);
 
-      _.forEach(categories,function(categoryEach){
-        if(categoryEach.id === id){
-          categoryEach.name = categoryName;
-          client.set('categories',JSON.stringify(categories),function(err, categories){
-            res.send(categories);
-          });
-        }
-      });
+    _.forEach(categories, function (categoryEach) {
+      if (categoryEach.id === id) {
+        categoryEach.name = categoryName;
+        client.set('categories', JSON.stringify(categories), function (err, categories) {
+          res.send(categories);
+        });
+      }
     });
+  });
 });
 
 
