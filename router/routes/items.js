@@ -76,14 +76,13 @@ router.delete('/:id', function (req, res) {
   });
 });
 
-router.post('/:id', function (req, res) {
+router.post('/', function (req, res) {
 
   client.get('allProducts', function (err, data) {
-
+    var products = JSON.parse(data);
     var newProduct = req.body.item;
-    newProduct.id = parseInt(req.params.id);
-
-    var allProducts = add(JSON.parse(data), newProduct);
+    newProduct.id = parseInt(products[products.length - 1].id) + 1;
+    var allProducts = add(products, newProduct);
 
     client.set('allProducts', JSON.stringify(allProducts), function (err, data) {
       res.send(data);
