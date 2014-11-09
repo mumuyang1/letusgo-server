@@ -25,14 +25,13 @@ function initCategories() {
 
 client.set('categories', JSON.stringify(initCategories()));
 
-router.post('/:id', function (req, res) {
+router.post('/', function (req, res) {
 
   client.get('categories', function (err, data) {
-
     var categories = JSON.parse(data);
     var newCategory =
     {
-      id: parseInt(req.params.id),
+      id:  parseInt(categories[categories.length-1].id) + 1,
       name: req.body.name
     };
     categories.push(newCategory);
